@@ -3,36 +3,39 @@
 namespace onebone\boat\entity;
 
 use pocketmine\entity\Entity;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\event\entity\EntityDeathEvent;
+use pocketmine\level\Level;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\network\protocol\EntityEventPacket;
+use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\item\Item;
 
 class Boat extends Entity{
   const NETWORK_ID = 90;
 
+  public function __construct(Level $level, CompoundTag $nbt){
+  	$this->width = 3;
+  	$this->height = 2;
+  	parent::__construct($level, $nbt);
+  }
+
   public function spawnTo(Player $player){
     $pk = new AddEntityPacket();
-    $pk->eid = $this->getId();
+    $pk->entityRuntimeId = $this->getId();
     $pk->type = self::NETWORK_ID;
-    $pk->x = $this->x;
-    $pk->y = $this->y;
-    $pk->z = $this->z;
-    $pk->speedX = 0;
-    $pk->speedY = 0;
-    $pk->speedZ = 0;
+    $pk->position = $this;
+    $pk->motion = null;
     $pk->yaw = 0;
     $pk->pitch = 0;
-    $pk->metadata = $this->dataProperties;
+    $pk->metadata = $this->getDataPropertyManager()->getAll();
     $player->dataPacket($pk);
 
     parent::spawnTo($player);
   }
 
-  public function attack($damage, EntityDamageEvent $source){
-    parent::attack($damage, $source);
+  public function attack(EntityDamageEvent $source){
+    parent::attack($source);
 
     if(!$source->isCancelled()){
       $pk = new EntityEventPacket();
