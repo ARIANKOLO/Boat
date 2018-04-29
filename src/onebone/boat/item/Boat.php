@@ -30,7 +30,7 @@ class Boat extends BoatPM{
     $boat = new BoatEntity($player->getLevel(), new CompoundTag("", [
   			"Pos" => new ListTag("Pos", [
   				new DoubleTag("", $realPos->getX()),
-  				new DoubleTag("", $realPos->getY()),
+  				new DoubleTag("", $realPos->getY() - 1),
   				new DoubleTag("", $realPos->getZ())
   			]),
   			"Motion" => new ListTag("Motion", [
@@ -45,15 +45,17 @@ class Boat extends BoatPM{
   	]));
     $boat->spawnToAll();
 
-    $item = $player->getInventory()->getItemInHand();
-    $count = $item->getCount();
-    if(--$count <= 0){
-      $player->getInventory()->setItemInHand(Item::get(Item::AIR));
-      return false;
-    }
+    if($player->isSurvival()){
+      $item = $player->getInventory()->getItemInHand();
+      $count = $item->getCount();
+      if(--$count <= 0){
+        $player->getInventory()->setItemInHand(Item::get(Item::AIR));
+        return false;
+      }
 
-    $item->setCount($count);
-    $player->getInventory()->setItemInHand($item);
+      $item->setCount($count);
+      $player->getInventory()->setItemInHand($item);
+    }
     return true;
   }
 }
