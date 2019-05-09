@@ -1,5 +1,5 @@
-name: Boat
+name: BoatIR
 main: onebone\boat\Main
 version: "2.0.0-InDev"
-author: ["onebone", "robske110"]
-api: [3.0.0-ALPHA12]
+author: ARIANKOLO
+api: [3.0.0, 4.0.0]
